@@ -131,3 +131,4 @@ let data = [4, 5, 9]
 console.log(sum.apply(this, data))
 console.log(sum(...data))
 ```
+
