@@ -41,7 +41,7 @@ viking.id = 1111  //出错，不能再赋值
 
 ## 函数和类型推断
 
-```
+```js
 function add(x: number, y: number, z?: number): number {
     if(typeof z === 'number') {
         return x + y + z
@@ -96,7 +96,7 @@ static
 
 ## interface + 泛型
 
-```
+```ts
 interface IWithLength {
 	length: number,
 	getLength(): number,
