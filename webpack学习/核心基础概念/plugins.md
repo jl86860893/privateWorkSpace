@@ -11,6 +11,7 @@
 - ZipWebpackPlugin 将打包的资源生成一个zip包
 
 ```js
+const HtmlWebpackPlugin = require('html-webpack-plugin'); // 通过 npm 安装
 const path = require('path')
 
 // 放到plugins数组里
