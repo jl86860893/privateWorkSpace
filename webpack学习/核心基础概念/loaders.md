@@ -6,3 +6,19 @@
 - ts-loader 处理typescript
 - file-loader 分发文件到output目录并返回相对路径
 - postcss-loader 用postcss来处理CSS
+- raw-loader 
+- thread-loader 多进程打包
+
+```js
+// test指定匹配规则， use指定使用的loader名称
+module.exports = {
+  output: {
+    filename: 'bundle.js'
+  },
+  module: {
+    rules: [
+      {test: /\.txt$, use: 'raw-loader'},
+    ]
+  }
+}
+```
