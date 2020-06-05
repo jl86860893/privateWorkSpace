@@ -12,8 +12,21 @@ function loadScript(src) {
   })
 }
 
+// promise.then(onFulfilled, onRejected)
 loadScript('./1.js')
-  .then(loadScript('./2.js'))
+  .then(() => loadScript('./2.js'), err => console.log(err))
   .then(loadScript('./3.js'))
 ```
 
+```js
+function test (bool) {
+  if(bool) {
+    return new Promise((resolve, reject) => {
+      resolve(30)
+    });
+  } else {
+    return Promise.resolve(42);
+  }
+}
+test(1).then(val => console.log(val), err => console.log(err))
+```
