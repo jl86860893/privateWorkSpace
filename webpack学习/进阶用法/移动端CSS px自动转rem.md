@@ -31,6 +31,7 @@ rem和px的对比：
 - 可以使用手机淘宝的lib-flexible库 <a href="https://github.com/amfe/lib-flexible">https://github.com/amfe/lib-flexible</a>
 
 >$ npm i px2rem-loader -D
+
 >$ npm i lib-flexible -S
 
 ```js
