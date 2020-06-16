@@ -60,3 +60,6 @@ module.exports: {
 
 lib-flexible的js源码直接引用到html的head中：
 >```<script type="text/javascript">...源码粘贴</script>```
+
+***后续使用静态资源内联方式将lib-flexible引入***
+>\<script>${require('raw-loader!babel-loader!../node_modules/lib-flexible')}\</script>

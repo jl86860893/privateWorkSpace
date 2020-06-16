@@ -1,5 +1,4 @@
 ## 方法一：利用HtmlWebpackExternalPlugin进行公共脚本分离
-test匹配出需要分离的包
 >npm i html-webpack-externals-plugin -D
 ```js
 const HtmlWebpackExternalPlugin = require('html-webpack-externals-plugin')
@@ -58,7 +57,7 @@ module.exports = {
 ```
 
 ### 利用SplitChunksPlugin分离基础包
-
+test匹配出需要分离的包
 ```js
 module.exports = {
   optimization: {
