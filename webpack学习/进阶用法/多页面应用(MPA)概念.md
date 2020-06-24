@@ -53,7 +53,7 @@ const setMPA = () => {
       new HtmlWebpackPlugin({
         template: path.join(__dirname, `src/${pageName}/index.html`),
         filename: `${pageName}.html`,
-        chunks: [pageName],
+        chunks: [pageName],  // 引入何种js=> [pageName].js
         inject: true,
         minify: {
           html5: true,
