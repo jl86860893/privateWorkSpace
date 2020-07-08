@@ -38,9 +38,9 @@ module.exports = {
   optimization: {
     splitChunks: {
       chunks: 'async',  // 推荐all
-      minSize: 30000,
-      maxSize: 0,
-      minChunks: 1,
+      minSize: 0,
+      maxSize: 30000,
+      minChunks: 1, // 引用一次就拆
       maxAsyncRequests: 5,
       maxInitialRequests: 3,
       automaticNameDelimiter: '~',
@@ -63,7 +63,7 @@ module.exports = {
   optimization: {
     splitChunks: {
       cacheGroup: {
-        commons: {
+        commons: {  // htmlWebpackPlugin中的chunks数组添加"commons"
           test: /(react|react-dom)/,
           name: 'vendors',
           chunks: 'all',
@@ -74,3 +74,41 @@ module.exports = {
 }
 ```
 dist目录生成vendors_a064e477.js放React和ReactDom的公共代码，大小110k
+
+其他实例：
+```js
+optimization: {
+  // 压缩 css
+  minimizer: [new TerserJSPlugin({}), new OptimizeCSSAssetsPlugin({})],
+
+  // 分割代码块
+  splitChunks: {
+      chunks: 'all',
+      /**
+        * initial 入口 chunk，对于异步导入的文件不处理
+          async 异步 chunk，只对异步导入的文件处理
+          all 全部 chunk
+        */
+
+      // 缓存分组
+      cacheGroups: {
+          // 第三方模块
+          vendor: {
+              name: 'vendor', // chunk 名称
+              priority: 1, // 权限更高，优先抽离，重要！！！
+              test: /node_modules/,
+              minSize: 0,  // 大小限制
+              minChunks: 1  // 最少复用过几次
+          },
+
+          // 公共的模块
+          common: {
+              name: 'common', // chunk 名称
+              priority: 0, // 优先级
+              minSize: 0,  // 公共模块的大小限制
+              minChunks: 2  // 公共模块最少复用过几次
+          }
+      }
+  }
+}
+```
