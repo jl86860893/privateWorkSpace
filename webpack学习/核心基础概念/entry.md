@@ -44,3 +44,32 @@ module.exports = {
   }, {}),
 }
 ```
+
+plus:
+配置文件中entry接受三种形式的值：字符串，数组和对象
+key还可以是路径字符串。此时webpack会自动生成路径目录，并将路径的最后作为[name]。这个特性在多页面配置下也是很有用的
+```js
+entry: {
+    'path/of/entry': './deep-app.js',
+    'app': './app.js'
+},
+output: {
+    path: './output',
+    filename: '[name].js'
+}
+```
+
+value如果是数组，则数组中元素需要是上面描述的合理字符串值。数组中的文件一般是没有相互依赖关系的，但是又处于某些原因需要将它们打包在一起。比如：
+```js
+entry: {
+    vendor: ['jquery', 'lodash']
+}
+```
+
+```js
+entry: ['./app.js', 'lodash']
+等价于
+entry: {
+    main: ['./app.js', 'lodash']
+}
+```
