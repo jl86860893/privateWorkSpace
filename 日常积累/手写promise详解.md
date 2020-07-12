@@ -236,3 +236,91 @@ class Promise {
   }
 }
 ```
+
+## 实现链式调用
+```js
+class Promise {
+  constructor(executor) {
+    this.status = PENDING;
+    this.value = undefined;
+    this.reason = undefined;
+
+    this.onResolvedCallbacks = [];
+    this.onRejectedCallbacks = [];
+
+    let resolve = (value) => {
+      if(this.status === PENDING) {
+        this.value = value;
+        this.status = RESOLVED
+        this.onResolvedCallbacks.forEach(fn => fn())  // 订阅
+      }
+    }
+
+    let reject = (reason) => {
+      if(this.status === PENDING) {
+        this.reason = reason;
+        this.status = REJECTED;
+        this.onRejectedCallbacks.forEach(fn => fn())  // 订阅
+      }
+    }
+
+    try {
+      executor(resolve, reject);
+    } catch(e) {
+      reject(e)
+    }
+  }
+
+  then(onfullfilled, onrejected) {
+    let promise2 = new Promise((resolve, reject) => {
+      /*同步*/
+      if(this.status === RESOLVED) {
+        // 在当前时间片获取不到promise2，因为还没new完，放到下一个宏任务中去
+        setTimeout(() => {
+          try {
+            // x 可能是普通值 也可能是promise
+            // 判断x的值 =》 promise2的状态
+            let x = onfullfilled(this.value)
+            resolvePromise(promise2, x, resolve, reject);
+          } catch(e) {
+            reject(e)
+          }
+        }, 0);
+        
+      }
+
+      if(this.status === REJECTED) {
+        setTimeout(() => {
+          try{
+            let x = onrejected(this.reason);
+            resolvePromise(promise2, x, resolve, reject);
+          } catch(e) {
+            reject(e)
+          }
+        }, 0)
+        onrejected(this.reason)
+      }
+
+      /*异步*/
+      // 发布
+      if(this.status === PENDING) {
+        setTimeout(() => {
+          try {
+            let 
+          } catch(e) {
+            reject(e)
+          }
+        }, 0)
+        this.onResolvedCallbacks.push(() => {
+          // todo
+          onfulfilled(this.value);
+        });
+        this.onRejectedCallbacks.push(() => {
+          // todo
+          onrejected(this.reason)
+        })
+      }
+    }
+  })
+}
+```
