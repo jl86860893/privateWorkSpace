@@ -279,14 +279,13 @@ class Promise {
         setTimeout(() => {
           try {
             // x 可能是普通值 也可能是promise
-            // 判断x的值 =》 promise2的状态
+            // 判断x的值 => promise2的状态
             let x = onfullfilled(this.value)
             resolvePromise(promise2, x, resolve, reject);
           } catch(e) {
             reject(e)
           }
         }, 0);
-        
       }
 
       if(this.status === REJECTED) {
@@ -304,23 +303,159 @@ class Promise {
       /*异步*/
       // 发布
       if(this.status === PENDING) {
-        setTimeout(() => {
-          try {
-            let 
-          } catch(e) {
-            reject(e)
-          }
-        }, 0)
         this.onResolvedCallbacks.push(() => {
           // todo
-          onfulfilled(this.value);
+          setTimeout(() => {
+            try {
+              let x = onfulfilled(this.value);
+              resolvePromise(promise2, x, resolve, reject)
+            } catch(e) {
+              reject(e)
+            }
+          }, 0)
         });
         this.onRejectedCallbacks.push(() => {
           // todo
-          onrejected(this.reason)
+          setTimeout(() => {
+            try {
+              let x = onrejected(this.reason);
+              resolvePromise(promise2, x, resolve, reject)
+            } catch(e) {
+              reject(e)
+            }
+          }, 0)
         })
       }
     }
   })
+}
+```
+
+## 判断x
+1. x 和 promise2不能是同一个
+```js
+let promise2 = Promise((resolve, reject) => {
+  resolve()
+})
+
+promise2.then(() => {
+  return promise2;
+})
+
+// 这次又是promise2
+promise2.then(null, err => {
+  console.log(err);
+})
+```
+
+2. 解释x.then为什么用try...catch...
+```js
+Object.defineProperty(x, then, {
+  get() {
+    throw new Error()
+  }
+})
+```
+
+
+```js
+function resolvePromise(promise2, x, resolve, reject){
+  // 1.循环引用报错
+  if(x === promise2){
+    // reject报错
+    return reject(new TypeError('Chaining cycle detected for promise'));
+  }
+
+  // Promise必会
+  // 判断数据类型 typeof constructor instanceof toString
+  if (typeof x === 'object' && x !== null || typeof x === 'function') {
+    let called; // 3.内部测试的时候  会成功和失败都调用
+    try {
+      let then = x.then; // 2.取then 有可能这个then属性是通过defineProperty来定义的
+      if (typeof then === 'function') {
+        then.call(x, y => {
+          if(called) {
+            return
+          }
+          called = true;
+          // resolve(y);  // 采用promise的成功结果将值向下传递,可能还是个promise
+          resolvePromise(promise2, y, resolve, reject);
+        }, r => {
+          if(called) {
+            return
+          }
+          called = true;
+          reject(r); // 采用promise的失败结果将值向下传递
+        }); // 能保证不用再次取then的值
+      } else {
+        // {then:1}
+        resolve(x) // 说明x是一个普通的对象 直接成功即可
+      }
+    } catch(e) {
+      // 3. promise失败了  有可能还能调用成功
+      if(called) {
+        return
+      }
+      called = true;
+      reject(e);
+    }
+  } else {
+    // x 是一个普通值
+    resolve(x)
+  }
+}
+```
+
+
+• Otherwise, if x is an object or function,Let then be x.then
+•x 不能是null
+•x 是普通值 直接resolve(x)
+• x 是对象或者函数（包括promise）， let then = x.then 2、当x是对象或者函数（默认promise）
+•声明了then
+•如果取then报错，则走reject()
+•如果then是个函数，则用call执行then，第一个参数是this，后面是成功的回调和失败的回调
+•如果成功的回调还是pormise，就递归继续解析 3、成功和失败只能调用一个 所以设定一个called来防止多次调用
+```js
+function resolvePromise(promise2, x, resolve, reject){
+  // 循环引用报错
+  if(x === promise2){
+    // reject报错
+    return reject(new TypeError('Chaining cycle detected for promise'));
+  }
+  // 防止多次调用
+  let called;
+  // x不是null 且x是对象或者函数
+  if (x != null && (typeof x === 'object' || typeof x === 'function')) {
+    try {
+      // A+规定，声明then = x的then方法
+      let then = x.then;
+      // 如果then是函数，就默认是promise了
+      if (typeof then === 'function') { 
+        // 就让then执行 第一个参数是this   后面是成功的回调 和 失败的回调
+        then.call(x, y => {
+          // 成功和失败只能调用一个
+          if (called) return;
+          called = true;
+          // resolve的结果依旧是promise 那就继续解析
+          resolvePromise(promise2, y, resolve, reject);
+        }, err => {
+          // 成功和失败只能调用一个
+          if (called) return;
+          called = true;
+          reject(err);// 失败了就失败了
+        })
+      } else {
+        resolve(x); // 直接成功即可
+      }
+    } catch (e) {
+      // 也属于失败
+      if (called) return;
+      called = true;
+      // 取then出错了那就不要在继续执行了
+      reject(e); 
+    }
+  } else {
+    resolve(x);
+  }
 }
 ```
