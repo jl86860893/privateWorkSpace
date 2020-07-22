@@ -1,7 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import pathToReg from 'path-to-regexp';
+
 import { Consumer } from './context';
+
+const { pathToRegexp } = require('path-to-regexp');
 
 export default class Route extends React.Component {
     render() {
@@ -12,7 +14,7 @@ export default class Route extends React.Component {
                         let { path, component: Component, exact=false } = this.props;
                         let pathname = state.location.pathname;
                         let keys = []
-                        const reg = pathToReg(path, keys, {end: exact});
+                        const reg = pathToRegexp(path, keys, {end: exact});
                         keys = keys.map(item => item.name)
                         const result = pathname.match(reg)
                         let [url, ...values] = result;

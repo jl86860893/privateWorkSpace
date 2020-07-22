@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React from 'react';
 import HashRouter from './HashRouter'
 import Route from './Route'
 import Link from './Link'

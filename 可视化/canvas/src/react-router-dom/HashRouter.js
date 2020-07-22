@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import ReactDOM from 'react-dom';
-import { Provide, Provider } from './context';
+import { Provider } from './context';
 export default class HashRouter extends Component {
     state = {
         location: {
