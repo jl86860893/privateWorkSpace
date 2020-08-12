@@ -11,9 +11,13 @@ function mathpow(x, n) {
 
 function powFast(x, n) {
   let result = 1;
-  const N = Math.abs(n)
-  for (let i = 0; i < N; ++i) {
-    result *= x;
+  let N = Math.abs(n)
+  while(N) {
+    if((N & 1) === 1) {
+      result *= x;
+    }
+    x *= x;
+    N >>= 1;
   }
   return n < 0 ? 1 / result : result;
 }
