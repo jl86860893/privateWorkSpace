@@ -10,7 +10,7 @@ let authors = {
 }
 
 authors[Symbol.iterator] = function() {
-  let allAuthors = tis.allAuthors
+  let allAuthors = this.allAuthors
   let keys = Reflect.ownKeys(allAuthors)
   let values = []
   return {
