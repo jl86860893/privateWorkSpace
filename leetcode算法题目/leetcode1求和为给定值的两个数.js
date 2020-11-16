@@ -29,5 +29,27 @@ console.log(getResult())
 
 //方法1：使用Map(value, key)一个个的放进去，在Map中查找每一个与目标的差值，找不到加入Map中继续
 // T:o(n)   S:o(n)
+function getIndexArr(target, inputArr) {
+  if (!inputArr || !inputArr.length || inputArr.length < 2) {
+    return [-1, -1];
+  }
+  let result = [-1, -1]
+  const tempMap = new Map();
+  inputArr.forEach((item, index) => {
+    if (tempMap.has((target - item))) {
+      result = [tempMap.get(target - item), index];
+    } else {
+      tempMap.set(item, index);
+    }
+  })
+  return result;
+}
+
+const val = getIndexArr(10, [1,2,4,6,3,7,4]);
+console.log(val)
+
 
 // 方法2： 两层for循环
+
+
+
