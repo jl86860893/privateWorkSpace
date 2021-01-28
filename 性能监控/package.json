@@ -1,0 +1,33 @@
+{
+  "name": "ded-log",
+  "version": "0.0.9",
+  "description": "DED打点工具",
+  "main": "./src/index.js",
+  "bin": {
+    "log": "./src/index.js"
+  },
+  "scripts": {
+    "build": "webpack",
+    "buildie": "webpack && npx babel ./dist/ded.main.js --out-file ./dist/ded.ie.js && uglifyjs ./dist/ded.ie.js -c --> ./dist/temp.js && mv ./dist/temp.js ./dist/ded.ie.js"
+  },
+  "keywords": [],
+  "author": "wangyuchao",
+  "license": "MIT",
+  "dependencies": {
+    "@babel/core": "^7.12.9",
+    "@babel/plugin-transform-parameters": "^7.12.1",
+    "@babel/preset-env": "^7.12.7",
+    "@babel/preset-env-standalone": "^7.8.3",
+    "babel-loader": "^8.2.2",
+    "babel-polyfill": "^6.26.0",
+    "clean-webpack-plugin": "^3.0.0",
+    "core-js": "^3.8.0",
+    "ua-parser-js": "^0.7.22",
+    "web-vitals": "^1.0.1"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.12.8",
+    "@babel/plugin-transform-arrow-functions": "^7.12.1",
+    "webpack-cli": "^4.2.0"
+  }
+}
