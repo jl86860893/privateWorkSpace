@@ -3,83 +3,108 @@ import React, { Component } from 'react';
 import echarts from 'echarts/lib/echarts';
 import 'echarts/map/js/china';
 import geoJson from 'echarts/map/json/china.json';
-import { Button } from 'antd';
 
-class MapTest extends Component {
-  state = {
-    data: [
-      { name: '西藏', value: 605.83 },
-      { name: '青海', value: 1670.44 },
-      { name: '宁夏', value: 2102.21 },
-      { name: '海南', value: 2522.66 },
-      { name: '甘肃', value: 5020.37 },
-      { name: '贵州', value: 5701.84 },
-      { name: '新疆', value: 6610.05 },
-      { name: '云南', value: 8893.12 },
-      { name: '重庆', value: 10011.37 },
-      { name: '吉林', value: 10568.83 },
-      { name: '山西', value: 11237.55 },
-      { name: '天津', value: 11307.28 },
-      { name: '江西', value: 11702.82 },
-      { name: '广西', value: 11720.87 },
-      { name: '陕西', value: 12512.3 },
-      { name: '黑龙江', value: 12582 },
-      { name: '内蒙古', value: 14359.88 },
-      { name: '安徽', value: 15300.65 },
-      { name: '北京', value: 16251.93 },
-      { name: '福建', value: 17560.18 },
-      { name: '上海', value: 19195.69 },
-      { name: '湖北', value: 19632.26 },
-      { name: '湖南', value: 19669.56 },
-      { name: '四川', value: 21026.68 },
-      { name: '辽宁', value: 22226.7 },
-      { name: '河北', value: 24515.76 },
-      { name: '河南', value: 26931.03 },
-      { name: '浙江', value: 32318.85 },
-      { name: '山东', value: 45361.85 },
-      { name: '江苏', value: 49110.27 },
-      { name: '广东', value: 53210.28 },
-    ],
-    selectedProvince: null,
-  }
+class DeviceInfoMapChart extends Component {
+  echartRef = React.createRef();
+
+  data = [
+    { name: '西藏' },
+    { name: '青海' },
+    { name: '宁夏' },
+    { name: '海南' },
+    { name: '甘肃' },
+    { name: '贵州' },
+    { name: '新疆' },
+    { name: '云南' },
+    { name: '重庆' },
+    { name: '吉林' },
+    { name: '山西' },
+    { name: '天津' },
+    { name: '江西' },
+    { name: '广西' },
+    { name: '陕西' },
+    { name: '黑龙江' },
+    { name: '内蒙古' },
+    { name: '安徽' },
+    { name: '北京' },
+    { name: '福建' },
+    { name: '上海' },
+    { name: '湖北', selected: true },
+    { name: '湖南' },
+    { name: '四川' },
+    { name: '辽宁' },
+    { name: '河北' },
+    { name: '河南' },
+    { name: '浙江' },
+    { name: '山东' },
+    { name: '江苏' },
+    { name: '广东' },
+    { name: '台湾' },
+  ]
+
+  myChart = null;
 
   componentDidMount() {
+    const { actionRef, updateProvinceName } = this.props;
+    echarts.registerMap('zhongguo', geoJson);
+    this.myChart = echarts.init(this.echartRef.current);
+    this.initalECharts()
+    actionRef.current = {
+      resetMap: value => this.resetMap(value),
+    }
+    this.myChart.on('click', params => {
+      if (params.componentType === 'series') {
+        const provinceName = params.name;
+        updateProvinceName(provinceName)
+        this.data.map(item => {
+          if (item.name === provinceName) {
+            item.selected = true;
+            return item;
+          }
+          item.selected = false;
+          return item
+        })
+      }
+      this.updateOptions()
+    });
+  }
+
+  componentWillUnmount() {
+    this.myChart.off('click')
+  }
+
+  resetMap = () => {
+    this.myChart.clear();
     this.initalECharts();
   }
 
-  handleClick = () => {
-    const { data } = this.state;
-    this.setState({
-      data,
+  updateOptions = () => {
+    this.myChart.setOption({
+      series: [
+        {
+          data: this.data,
+        },
+      ],
     })
   }
 
   initalECharts = () => {
-    const { data } = this.state;
-    echarts.registerMap('zhongguo', geoJson);
-    const myChart = echarts.init(document.getElementById('main'));
-    myChart.setOption({
+    this.myChart.setOption({
       title: {
-        text: '中国地图',
-        left: 'left'
+        text: '设备信息总览',
+        left: 'left',
+        padding: [15, 0, 0, 20],
+        textStyle: {
+          color: '#5C6280',
+          fontSize: 16,
+        },
       },
       tooltip: {
         trigger: 'item',
         showDelay: 0,
         transitionDuration: 0.2,
-        formatter: '{b}<br/>{c} (p / km2)'
+        formatter: '{b}',
       },
-      // visualMap: {
-      //   min: 800,
-      //   max: 50000,
-      //   left: 'right',
-      //   text: ['High', 'Low'],
-      //   realtime: false,
-      //   calculable: true,
-      //   inRange: {
-      //       color: ['lightskyblue', 'yellow', 'orangered']
-      //   }
-      // },
       series: [
         {
           type: 'map',
@@ -91,67 +116,46 @@ class MapTest extends Component {
             max: 6,
           },
           itemStyle: {
-            normal: {//未选中状态
-              borderWidth:2,//边框大小
-              borderColor:'#60BDFF',
-              areaColor: '#6B80F3',//背景颜色
+            normal: { // 未选中状态
+              borderWidth: 1, // 边框大小
+              borderColor: '#6598FF',
+              areaColor: '#F2F7FF', // 背景颜色
               label: {
-                show: true//显示名称
-              }
+                show: true, // 显示名称
+                formatter: params => {
+                  if (params.name === '南海诸岛' || params.name === '澳门' || params.name === '香港') {
+                    return ' ';
+                  }
+                  return params.name;
+                },
+              },
             },
             emphasis: {
-              borderWidth:5,//边框大小
-              borderColor:'#60BDFF',
-              areaColor: 'red',//背景颜色
+              borderWidth: 5, // 边框大小
+              borderColor: '#6598FF',
+              areaColor: '#6598FF', // 背景颜色
               zoom: 1.3,
-            }
+            },
           },
           emphasis: {
             label: {
-              show: true
-            }
+              show: true,
+            },
           },
-          data: data,
-          selectedMode: 'single',
-        }
+          data: this.data,
+        },
       ],
     });
-    myChart.on('click', params => {
-      if (params.componentType === 'series') {
-        const provinceName = params.name;
-        console.log(provinceName)
-        this.setState({
-          selectedProvince: provinceName,
-        })
-      }
-    })
   }
-
-    // convertData(data) {
-    //     var res = [];
-    //     for (var i = 0; i < data.length; i++) {
-    //         var geoCoord = geoCoordMap[data[i].name];
-    //         if (geoCoord) {
-    //             res.push({
-    //                 name: data[i].name,
-    //                 value: geoCoord.concat(data[i].area),
-    //                 area: data[i].area,
-    //                 type: data[i].type,
-    //             });
-    //         }
-    //     }
-    //     console.log(res);
-    //     return res;
-    // }
 
   render() {
     return (
       <>
-        <div id="main" style={{width: '700px', height: '700px'}}></div>
-        <Button type="primary" onClick={this.handleClick}>tijiao</Button>
+        <div ref={this.echartRef} style={{ width: '100%', height: '100%' }}>
+        </div>
       </>
     )
   }
 }
 
-export default MapTest;
+export default DeviceInfoMapChart;

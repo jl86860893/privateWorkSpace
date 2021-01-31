@@ -6,7 +6,10 @@ webpack默认支持，在`.babelrc`里设置`modules: false`即可
 - production mode的情况下默认开启。
 
 ## 要求
-必须是ES6的语法，CJS的方式不支持
+**必须是ES6的语法(ES6 Module)，CJS(Commonjs)的方式不支持:**
+ES6 Module 静态引入，编译时引入
+Commonjs 动态引入，执行时引入
+只有ES6 Module 才能静态分析，实现tree shaking
 
 ## DCE（Elimination）
 - 代码不会被执行，不可到达
@@ -22,4 +25,4 @@ webpack默认支持，在`.babelrc`里设置`modules: false`即可
 代码擦除： uglify阶段删除无用代码
 
 ## tree shaking失效
-代码里有副作用
+代码里有副作用,dom操作就是副作用

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>html-light-waterMrk</title>
+</head>
+<body>
+  <div id="app">
+    <h1>DED</h1>
+    <p>hello</p>
+  </div>
+</body>
+<script>
+  ;(function() {
+    const waterWrapper = document.createElement('div')
+    cssHelper(waterWrapper, {
+      position: 'absolute',
+      top: `0`,
+      left: `0`,
+      flexWrap: `wrap`,
+      display: `flex`,
+    })
+
+    function cssHelper(el, prototype) {
+      for (let i in prototype) {
+        el.style[i] = prototype[i]
+      }
+    }
+
+    function createItem() {
+      const item = document.createElement('div')
+      item.innerHTML = 'ded的靓仔靓妹'
+      cssHelper(item, {
+        position: 'absolute',
+        top: `50px`,
+        left: `50px`,
+        fontSize: `16px`,
+        color: '#000',
+        lineHeight: 1.5,
+        opacity: 0.1,
+        transform: `rotate(-15deg)`,
+        transformOrigin: '0 0',
+        userSelect: 'none',
+        whiteSpace: 'nowrap',
+        overflow: 'hidden',
+      })
+      return item;
+    }
+
+    const waterHeight = 100;
+    const waterWidth = 180;
+    const { clientWidth, clientHeight } = document.documentElement || document.body;
+    const column = Math.ceil(clientWidth / waterWidth);
+    const rows = Math.ceil(clientHeight / waterHeight);
+    for (let i = 0; i < column * rows; i++) {
+        const wrap = document.createElement('div');
+        cssHelper(wrap, Object.create({
+            position: 'relative',
+            width: `${waterWidth}px`,
+            height: `${waterHeight}px`,
+            flex: `0 0 ${waterWidth}px`,
+            overflow: 'hidden',
+        }));
+        wrap.appendChild( createItem());
+        waterWrapper.appendChild(wrap)
+    }
+    document.body.appendChild(waterWrapper)
+  })()
+</script>
+</html>
