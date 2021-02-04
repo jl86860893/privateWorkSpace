@@ -56,5 +56,47 @@ const dog = new Animal('tom')
 Animal.isAnimal(dog)
 ```
 
+### class和接口实现类型控制
+```ts
+class Queue<T> {
+    private data = [];
+    push(item: T) {
+        this.data.push(item)
+    }
+
+    pop(): T {
+        this.data.shift()
+    }
+}
+
+const queue = new Queue<number>();
+queue.push(1)
+console.log(queue.pop().toFixed())
+
+interface IKeyPair<T, U> {
+    key: T,
+    value: U
+}
+const keypair1: IKeyPair<string, number> = {key: '123', value: 123}
+const keypair1: IKeyPair<number, string> = {key: 123, value: '123'}
+```
+
+```js
+interface IPlus<T> {
+    (a: T, b: T): T
+}
+
+function plus(a: number, b: number): number {
+    return a+b
+}
+
+function connect(a: string, b: string): string {
+    return a + b
+}
+
+const numberplus: IPlus<number> = plus
+const stringplus: IPlus<string> = connect
+```
+
 
 
