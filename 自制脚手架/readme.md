@@ -192,3 +192,14 @@ cli
   .parse(argv, context)  // argv和自定义的context合并
   // .argv;  有了parse可不用
 ```
+
+补充小知识点：
+```js
+new Promise(() => {
+  let chain = Promise.resolve();
+  chain.then(() => {console.log(1)})
+  chain.then(() => {console.log(2)})
+  chain.then(() => {console.log(3)})
+  chain.then(() => {console.log(4)})
+})
+```
