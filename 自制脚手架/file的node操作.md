@@ -100,6 +100,7 @@ Returns a Promise<boolean> of whether the path exists.
 
 `pathExists.sync(path)`
 Returns a boolean of whether the path exists.
+
 ------
 判断文件存在的另一个nodejs方法
 fs.accessSync(filePath)
@@ -111,5 +112,57 @@ try {
   console.log('can read/write');
 } catch (err) {
   console.error('no access!');
+}
+```
+-------
+### resolve-from
+```js
+const resolveFrom = require('resolve-from');
+ 
+// There is a file at `./foo/bar.js`
+ 
+resolveFrom('foo', './bar');
+//=> '/Users/sindresorhus/dev/test/foo/bar.js'
+
+// 设置working directory，当前执行路径
+resolveFrom.silent(process.cwd(), moduleId)
+```
+
+resolveFrom(fromDirectory, moduleId)  
+类似require(), 当找不到时抛出异常.
+
+resolveFrom.silent(fromDirectory, moduleId)  
+当找不到时返回undefined
+
+### Module._nodeModulePaths()
+const Module = require('module')
+module._nodeModulePaths(path)
+```js
+// const nmCharts = [115, 101, 108, 117,100,111, 109,95, 101, 100, 111, 110]正好等于node_modules seludom_edon
+Module._nodeModulePaths = function(from) {
+    from = path.resolve(from);
+    if (from === '/') {
+        return ['node_modules'];
+    }
+    const paths = [];
+    var p = 0;
+    var last = from.length;
+    for (var i = from.length - 1; i >= 0; --i) {
+        const code = from.charCodeAt(i);
+        // CHAR_FORWARD_SLASH为47.  String.fromCharCode(47)为'/'
+        if (code === CHAR_FORWARD_SLASH) {
+            if (p !== nmLen) {
+                path.push(from.slice(0, last) + '/node_modules');
+            }
+            last = i;
+            p = 0;
+        } else if (p !== -1) {
+            if (nmChars[p] === code) {
+                ++p;
+            } else {
+                p = -1
+            }
+        }
+    }
 }
 ```
