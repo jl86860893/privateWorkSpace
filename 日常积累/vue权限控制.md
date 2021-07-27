@@ -225,6 +225,7 @@ operations：
 -|-|-|-|-
 opid | int(10) | 否 |  | 
 name | String | 否 |  | 资源名称
+method | string | 否 | 
 type | String | 否 |  | 资源类型，btn-按钮，api-资源类型
 path | String | 否 |  | 资源路径->api请求路径
 remark | String | 是 |  | 资源路描述
